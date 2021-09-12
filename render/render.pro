@@ -1,9 +1,11 @@
-QT += widgets
+QT += widgets multimedia
 SOURCES += \
     MyWindow.cpp \
-    YUV_Reader.cpp \
+    Y4M_Reader.cpp \
+    YUV_Render.cpp \
     main.cpp
 
 HEADERS += \
     MyWindow.h \
-    YUV_Reader.h
+    Y4M_Reader.h \
+    YUV_Render.h

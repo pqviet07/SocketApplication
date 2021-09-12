@@ -1,7 +1,9 @@
 #include <QApplication>
 #include <QtWidgets>
 #include <MyWindow.h>
-#include <YUV_Reader.h>
+#include <YUV_Render.h>
+#include <Y4M_Reader.h>
+#include <QSound>
 
 int main(int argc, char** argv)
 {
@@ -10,8 +12,10 @@ int main(int argc, char** argv)
     MyWindow *mainWindow= new MyWindow();
 
     // Test ------------------------------
-    YUV_Reader *reader = new YUV_Reader("/home/quocviet/Desktop/MediaPlayer/efg.yuv", mainWindow);
-    reader->start();
+    Y4M_Reader *y4m_reader = new Y4M_Reader("/home/quocviet/Desktop/SocketApplication/raw_video.y4m");
+    YUV_Render *render= new YUV_Render(mainWindow, y4m_reader);
+    render->start();
     // -----------------------------------
+
     return app->exec();
 }
