@@ -2,12 +2,12 @@
 #define WAV_DATA_H
 
 #include "WAV_Header.h"
-#include <vector>
+#include <string>
 
 struct WavData
 {
     WavHeader header;
-    std::vector<char> dataChunk;
+    std::string dataChunk;
 };
 
 #endif //

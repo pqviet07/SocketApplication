@@ -6,21 +6,22 @@
 class WAV_Reader
 {
 private:
-    int duration{};
+    //int duration{};
     WavData *wavData{nullptr};
-    std::vector<WavData> *splitedData{nullptr};
+    //std::vector<WavData> *splitedData{nullptr};
     std::string path;
     std::ifstream fin;
 
 public:
     WAV_Reader(std::string path = "");
-    WavData* readWavFile(std::string path = "");
-    std::vector<WavData>* splitWavData(int secPerSegment = 1);
+    std::string* getNextFrame(int duration);
+    WavHeader* readWavHeader();
+    //std::vector<WavData>* splitWavData(int secPerSegment = 1);
     void showHeaderInfo();
     ~WAV_Reader();
 
-    std::vector<char> *getWavData() const;
-    std::string getPath() const;
+    //std::vector<char> *getWavData() const;
+    //std::string getPath() const;
 };
 
 #endif

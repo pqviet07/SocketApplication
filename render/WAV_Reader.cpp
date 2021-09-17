@@ -1,4 +1,5 @@
 #include "WAV_Reader.h"
+#include <QDebug>
 inline bool isSupported(WavHeader &header)
 {
     return header.compressionCode == 1 && header.bitsPerSample == 16;
@@ -7,15 +8,47 @@ inline bool isSupported(WavHeader &header)
 WAV_Reader::WAV_Reader(std::string path)
 {
     if (path.empty()) return;
-    readWavFile(path);
+    this->path = path;
+    readWavHeader();
 }
 
-WavData* WAV_Reader::readWavFile(std::string path) 
+WAV_Reader::~WAV_Reader()
 {
-    if (path.empty()) return nullptr;
-    this->path = path;
+    if(wavData != nullptr) delete wavData;
+    if(fin.is_open()) fin.close();
+}
 
-    fin.open(path, std::ios::binary);
+std::string *WAV_Reader::getNextFrame(int duration)
+{
+    int nByteData = duration*wavData->header.byteRate/1000;
+    std::string *data = new std::string(nByteData + sizeof(WavHeader), '\0');
+    wavData->header.dataChunkSize = nByteData;
+    char *p = (char*)&wavData->header;
+    for(int i=0; i<sizeof(WavHeader); i++){
+       (*data)[i]=*p;
+       p++;
+    }
+
+    char *tmp= new char[nByteData];
+    fin.read(tmp, nByteData);
+    //for(int i=0;i<nByteData;i++) qDebug()<<tmp[i];
+
+    int  j=44;
+    for(int i=0;i<nByteData;i++) {
+        (*data)[j++]=tmp[i];
+    }
+
+//    qDebug()<< data->data();
+//    std::ofstream fout("/home/quocviet/Desktop/ZaloProject/SocketApplication/render/asd33121.wav");
+//    fout.write((char*)data->data(), 44+nByteData);
+//    fout.close();
+
+    return data;
+}
+
+WavHeader* WAV_Reader::readWavHeader()
+{
+    fin.open(path);
     if(fin.is_open() == false) return nullptr;
 
     fin.seekg(0, std::ios::beg);
@@ -30,10 +63,10 @@ WavData* WAV_Reader::readWavFile(std::string path)
     }
 
     fin.seekg(sizeof(WavHeader), std::ios::beg);
-    wavData->dataChunk.resize(wavData->header.dataChunkSize);
-    fin.read((char *)wavData->dataChunk.data(), wavData->header.dataChunkSize);
-    duration = wavData->header.dataChunkSize / wavData->header.byteRate;
-    return wavData;
+    //wavData->dataChunk.resize(wavData->header.dataChunkSize);
+    //fin.read((char *)wavData->dataChunk.data(), wavData->header.dataChunkSize);
+    //duration = wavData->header.dataChunkSize / wavData->header.byteRate;
+    return &wavData->header;
 }
 
 void WAV_Reader::showHeaderInfo()
@@ -57,59 +90,52 @@ void WAV_Reader::showHeaderInfo()
     std::cout << "Data chunk size: " << (wavData->header.dataChunkSize) << std::endl;
 }
 
-WAV_Reader::~WAV_Reader()
-{
-    if(wavData != nullptr) delete wavData;
-    if(splitedData != nullptr) delete splitedData;
-    if(fin.is_open()) fin.close();
-}
-
 // std::vector<char> *WAV_Reader::getWavData() const {
 //     return &wavData->dataChunk;
 // }
 
-std::string WAV_Reader::getPath() const {
-     return path; 
-}
+//std::string WAV_Reader::getPath() const {
+//     return path;
+//}
 
-std::vector<WavData>* WAV_Reader::splitWavData(int secPerSegment)
-{
-    if (wavData == nullptr) return nullptr;
-    int nSegment = (duration-1) / secPerSegment + 1;
-    splitedData = new std::vector<WavData>(nSegment, WavData{});
+//std::vector<WavData>* WAV_Reader::splitWavData(int secPerSegment)
+//{
+//    if (wavData == nullptr) return nullptr;
+//    int nSegment = (duration-1) / secPerSegment + 1;
+//    splitedData = new std::vector<WavData>(nSegment, WavData{});
     
-    // handle header of wav
-    int totalSecond = duration;
-    int cntSecond = secPerSegment;
-    int cntByte = 0;
+//    // handle header of wav
+//    int totalSecond = duration;
+//    int cntSecond = secPerSegment;
+//    int cntByte = 0;
     
-    for (size_t i = 0; i < splitedData->size(); ++i)
-    {
-        if (totalSecond < secPerSegment) cntSecond = totalSecond;
+//    for (size_t i = 0; i < splitedData->size(); ++i)
+//    {
+//        if (totalSecond < secPerSegment) cntSecond = totalSecond;
 
-        int chunkSize = wavData->header.byteRate * cntSecond;
-        (*splitedData)[i].dataChunk.resize(chunkSize);
-        (*splitedData)[i].header = wavData->header;
-        (*splitedData)[i].header.dataChunkSize = chunkSize;
-        cntByte += chunkSize;
-        totalSecond -= secPerSegment;
-    }
+//        int chunkSize = wavData->header.byteRate * cntSecond;
+//        (*splitedData)[i].dataChunk.resize(chunkSize);
+//        (*splitedData)[i].header = wavData->header;
+//        (*splitedData)[i].header.dataChunkSize = chunkSize;
+//        cntByte += chunkSize;
+//        totalSecond -= secPerSegment;
+//    }
     
-    // handle body of wav
-    for (size_t i = 0; i < cntByte; ++i)
-    {
-        int bytePerSec = wavData->header.byteRate * secPerSegment;
-        (*splitedData)[i / bytePerSec].dataChunk[i % bytePerSec] = wavData->dataChunk[i];
-    }
+//    // handle body of wav
+//    for (size_t i = 0; i < cntByte; ++i)
+//    {
+//        int bytePerSec = wavData->header.byteRate * secPerSegment;
+//        (*splitedData)[i / bytePerSec].dataChunk[i % bytePerSec] = wavData->dataChunk[i];
+//    }
 
-    // store splited wav files
-    for (size_t i = 0; i < splitedData->size(); ++i)
-    {
-        std::ofstream fout(std::string("./WAV/wav_") + std::to_string(i) + std::string(".wav"), std::ios::binary);
-        fout.write((char *)(&splitedData[0][i].header), sizeof(WavHeader));
-        fout.write(splitedData[0][i].dataChunk.data(), splitedData[0][i].dataChunk.size());
-        fout.close();
-    }
+//    // store splited wav files
+//    for (size_t i = 0; i < splitedData->size(); ++i)
+//    {
+//        std::ofstream fout(std::string("./WAV/wav_") + std::to_string(i) + std::string(".wav"), std::ios::binary);
+//        fout.write((char *)(&splitedData[0][i].header), sizeof(WavHeader));
+//        fout.write(splitedData[0][i].dataChunk.data(), splitedData[0][i].dataChunk.size());
+//        fout.close();
+//    }
 
-    return splitedData;
-}
+//    return splitedData;
+//}

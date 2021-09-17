@@ -19,9 +19,12 @@ private:
     QSound *sound{nullptr};
     bool isPause{false};
     QMediaPlayer *audioPlayer{nullptr};
+
 public Q_SLOTS:
     void playVideo();
     void pauseVideo();
+    void playAudio(std::string*);
+
 public:
     MyWindow();
     void displayVideo(std::string*, int, int);

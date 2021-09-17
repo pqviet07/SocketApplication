@@ -11,6 +11,7 @@ private:
     std::string *yuvData{nullptr};
     Y4M_Reader *reader{nullptr};
     MyWindow *mainWindow{nullptr};
+    
 public:
     YUV_Render(MyWindow*, Y4M_Reader*);
     std::string* readNextFrame();
