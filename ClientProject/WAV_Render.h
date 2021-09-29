@@ -21,4 +21,5 @@ public:
     char* readNextFrame();
     void run() override;
 };
+
 #endif // WAV_RENDER_H

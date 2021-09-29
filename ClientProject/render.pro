@@ -3,8 +3,8 @@ SOURCES += \
     MainWindow.cpp \
     MediaDataStream.cpp \
     MediaFileReader.cpp \
-    MediaReaderVisitor.cpp \
-    MediaSocketReader.cpp \
+    MediaFrameReader.cpp \
+    MediaFrameSocketReader.cpp \
     SocketBuffer.cpp \
     SocketClient.cpp \
     SocketReader.cpp \
@@ -17,9 +17,9 @@ SOURCES += \
 HEADERS += \
     MainWindow.h \
     MediaDataStream.h \
-    MediaFileReader.h \
-    MediaReaderVisitor.h \
-    MediaSocketReader.h \
+    MediaFrameFileReader.h \
+    MediaFrameReader.h \
+    MediaFrameSocketReader.h \
     SocketBuffer.h \
     SocketClient.h \
     SocketReader.h \

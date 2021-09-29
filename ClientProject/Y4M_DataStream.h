@@ -16,14 +16,25 @@ private:
 //    size_t curReceipt{0};
 //    size_t curByte{0};
     size_t offset{0};
-//    std::string path;
-//    std::string* pBuffer{nullptr};
-//    std::ifstream fin;
 
 public:
-    Y4M_DataStream(std::string host, int port);
     char* getNextFrame() override;
-    void accept(MediaReaderVisitor* visitor) override;
+    void setFrameReader(MediaFrameReader*)override;
+
+    size_t getOffset() const;
+    void setOffset(size_t);
+
+    int getWidth() const;
+    void setWidth(int);
+
+    int getHeight() const;
+    void setHeight(int);
+
+    int getFPS() const;
+    void setFPS(int);
+
+    int getCurFrame() const;
+    void setCurFrame(int);
 };
 
 #endif

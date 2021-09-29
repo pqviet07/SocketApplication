@@ -80,7 +80,7 @@ int SocketClient::connectToServer(std::string host, int port)
     return 0;
 }
 
-const SocketBuffer* SocketClient::getDataStream() const
+SocketBuffer* SocketClient::getDataStream()
 {
     return &dataStream;
 }
