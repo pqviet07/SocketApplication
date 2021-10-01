@@ -7,6 +7,7 @@
 #include <vector>
 #include <math.h>
 #include "Y4M_Header.h"
+#include "../serialization.h"
 
 const std::string STRING_BEGIN_FRAME = "FRAME";
 const char PADDING_BYTE = 127;
@@ -24,6 +25,7 @@ public:
     Y4M_Reader(std::string);
     std::string *getNextFrame();
     bool isEOF();
+    char* serializeY4mHeader();
     ~Y4M_Reader();
     
     int getFrameSize() const;

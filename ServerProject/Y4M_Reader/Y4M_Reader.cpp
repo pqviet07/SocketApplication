@@ -109,3 +109,18 @@ int Y4M_Reader::getFrameSize() const { return frameSize; }
 Y4M_Header Y4M_Reader::getHeader() const { return y4mHeader; }
 
 int Y4M_Reader::getNumOfCurrentFrame() const { return nCurrentFrame; }
+
+char* Y4M_Reader::serializeY4mHeader() {
+    char *buffer = new char[1024];
+    char *ret = buffer;
+
+    buffer = serialize(buffer, y4mHeader.signature, 10);
+    buffer = serialize(buffer, y4mHeader.width);
+    buffer = serialize(buffer, y4mHeader.height);
+    buffer = serialize(buffer, y4mHeader.fps);
+    buffer = serialize(buffer, y4mHeader.interlacing_mode);
+    buffer = serialize(buffer, y4mHeader.pixel_ratio, 5);
+    buffer = serialize(buffer, y4mHeader.color_space, 8);
+    
+    return ret;
+}

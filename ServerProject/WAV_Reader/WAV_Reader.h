@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include "WAV_Data.h"
+#include "../serialization.h"
 
 class WAV_Reader
 {
@@ -17,8 +18,10 @@ public:
     std::string* getNextFrame(int duration);
     WAV_Header* readWavHeader();
     void showHeaderInfo();
-    bool isEOF();
+    char* serializeWavHeader();
     ~WAV_Reader();
+    bool isEOF();
+
 };
 
 #endif

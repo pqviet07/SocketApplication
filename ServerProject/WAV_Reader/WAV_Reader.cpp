@@ -85,3 +85,25 @@ WAV_Reader::~WAV_Reader()
     if (wavData != nullptr) delete wavData;
     if (fin.is_open())  fin.close();
 }
+
+char* WAV_Reader::serializeWavHeader() 
+{
+    char *buffer = new char[1024];
+    char *ret = buffer;
+<serialization.h>
+    buffer = serialize(buffer, wavData->header.riffId, 4);
+    buffer = serialize(buffer, wavData->header.headerChunkSize);
+    buffer = serialize(buffer, wavData->header.waveId, 4);
+    buffer = serialize(buffer, wavData->header.formatChunkId, 4);
+    buffer = serialize(buffer, wavData->header.formatChunkSize);
+    buffer = serialize(buffer, wavData->header.compressionCode);
+    buffer = serialize(buffer, wavData->header.numberOfChannels);
+    buffer = serialize(buffer, wavData->header.samplesRate);
+    buffer = serialize(buffer, wavData->header.byteRate);
+    buffer = serialize(buffer, wavData->header.blockAlign);
+    buffer = serialize(buffer, wavData->header.bitsPerSample);
+    buffer = serialize(buffer, wavData->header.dataChunkId, 4);
+    buffer = serialize(buffer, wavData->header.dataChunkSize);
+    
+    return ret;
+}
