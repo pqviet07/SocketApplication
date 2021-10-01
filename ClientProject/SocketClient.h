@@ -11,7 +11,6 @@
 #include <errno.h>
 #include <SocketBuffer.h>
 
-using namespace std;
 class SocketClient
 {
 private:
@@ -23,6 +22,6 @@ public:
     SocketClient();
     int receive_data(int);
     int connectToServer(std::string, int);
-    SocketBuffer* getDataStream() const;
+    SocketBuffer* getDataStream();
 };
 #endif // SOCKETCLIENT_H

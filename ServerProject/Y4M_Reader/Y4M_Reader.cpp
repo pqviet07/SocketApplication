@@ -69,7 +69,6 @@ Y4M_Reader::Y4M_Reader(std::string path)
         std::cerr << "Not supported" << std::endl;
         break;
     }
-    
     // -----------------------------------------------------------------------------------
     
     std::getline(fin, headerStr);

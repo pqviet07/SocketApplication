@@ -18,6 +18,8 @@ private:
     size_t offset{0};
 
 public:
+
+    Y4M_DataStream(MediaFrameReader*);
     char* getNextFrame() override;
     void setFrameReader(MediaFrameReader*)override;
 

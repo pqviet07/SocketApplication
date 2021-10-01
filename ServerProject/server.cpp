@@ -22,7 +22,11 @@ int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
    int curFrame = 0;
    int nBytePerPeriod = (duration/1000.0) * y4m_reader->getFrameSize() * y4m_reader->getHeader().fps;
 
-   while (true)
+   // send header info
+   
+
+   // Send audio frame + video frame
+   while (wav_reader->isEOF() && y4m_reader->isEOF())
    {
       if (!wav_reader->isEOF())
       {
@@ -63,8 +67,6 @@ int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
          } while (stat < 0);
          nCurrentByteYUV += nBytePerPeriod;
       }
-
-      if (wav_reader->isEOF() && y4m_reader->isEOF()) break;
    }
 
    for (auto &&var : yuvFrameList) delete var;

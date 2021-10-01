@@ -1,6 +1,6 @@
 #ifndef WAV_HEADER_H
 #define WAV_HEADER_H
-
+#pragma pack(1)
 struct WAV_Header
 {
     char riffId[4];

@@ -7,6 +7,7 @@
 class WAV_DataStream : public MediaDataStream {
 
 public:
+    WAV_DataStream(MediaFrameReader*);
     char* getNextFrame() override;
     void setFrameReader(MediaFrameReader*) override;
 };

@@ -16,7 +16,7 @@ void MediaFrameSocketReader::startAsync()
 
 void MediaFrameSocketReader::stopAsync()
 {
-
+    SocketReader::getInstance(host, port);
 }
 
 char *MediaFrameSocketReader::readNextFrame(WAV_DataStream *pDataStream)
@@ -46,9 +46,9 @@ char *MediaFrameSocketReader::readNextFrame(Y4M_DataStream *pDataStream)
     size_t nCurrentReceipt = pDataStream->getNumberCurrentReceipt();
 
     char* pFrame = nullptr;
-    int curByteGetFromSocket = (*pSocketBuffer).size();
+    size_t curByteGetFromSocket = (*pSocketBuffer).size();
     //qDebug()<<"SZ_X:"<<curByteGetFromSocket;
-    if( curByteGetFromSocket >= totalBytePerReceipt*(nCurrentReceipt+1))
+    if(curByteGetFromSocket >= totalBytePerReceipt*(nCurrentReceipt+1))
     {
         int curFrame = pDataStream->getCurFrame();
         if(curByteGetFromSocket-176444*(nCurrentReceipt+1)- curFrame*frameSize >= frameSize)

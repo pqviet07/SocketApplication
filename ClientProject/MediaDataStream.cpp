@@ -50,6 +50,11 @@ void MediaDataStream::setNumberCurrentReceipt(const size_t &value)
     nCurrentReceipt = value;
 }
 
+MediaDataStream::MediaDataStream(MediaFrameReader *frameReader)
+{
+    this->frameReader = frameReader;
+}
+
 SocketBuffer *MediaDataStream::getSocketBuffer()
 {
     return pSocketBuffer;

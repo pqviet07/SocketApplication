@@ -1,6 +1,9 @@
 #include "Y4M_DataStream.h"
 #include <QDebug>
 
+Y4M_DataStream::Y4M_DataStream(MediaFrameReader *frameReader) : MediaDataStream(frameReader)
+{}
+
 char* Y4M_DataStream::getNextFrame()
 {
     return frameReader->readNextFrame(this);

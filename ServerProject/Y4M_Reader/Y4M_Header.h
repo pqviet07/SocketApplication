@@ -1,6 +1,6 @@
 #ifndef Y4M_HEADER_H
 #define Y4M_HEADER_H
-
+#pragma pack(1)  
 struct Y4M_Header
 {
     char signature[10];

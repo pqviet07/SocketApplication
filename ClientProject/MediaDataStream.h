@@ -21,10 +21,11 @@ protected:
     SocketBuffer *pSocketBuffer;
 
 public:
+    MediaDataStream(MediaFrameReader *frameReader);
     virtual char* getNextFrame() = 0;
     virtual void setFrameReader(MediaFrameReader* frameReader) = 0;
 
-    SocketBuffer *getSocketBuffer() const;
+    SocketBuffer *getSocketBuffer();
     void setSocketBuffer(SocketBuffer *value);
 
     std::string *getBuffer() const;

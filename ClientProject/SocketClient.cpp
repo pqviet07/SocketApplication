@@ -67,7 +67,7 @@ int SocketClient::connectToServer(std::string host, int port)
     //Connect to remote server
     if (connect(socket_desc, (struct sockaddr *)&server, sizeof(server)) < 0)
     {
-        cout << strerror(errno);
+        std::cout << strerror(errno);
         close(socket_desc);
         puts("Connect Error");
         return 1;
