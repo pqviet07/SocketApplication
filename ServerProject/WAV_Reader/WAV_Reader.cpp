@@ -88,9 +88,9 @@ WAV_Reader::~WAV_Reader()
 
 char* WAV_Reader::serializeWavHeader() 
 {
-    char *buffer = new char[1024];
+    char *buffer = new char[45];
     char *ret = buffer;
-<serialization.h>
+   
     buffer = serialize(buffer, wavData->header.riffId, 4);
     buffer = serialize(buffer, wavData->header.headerChunkSize);
     buffer = serialize(buffer, wavData->header.waveId, 4);
@@ -106,4 +106,8 @@ char* WAV_Reader::serializeWavHeader()
     buffer = serialize(buffer, wavData->header.dataChunkSize);
     
     return ret;
+}
+
+WAV_Header* WAV_Reader::getHeader() {
+    return &wavData->header;
 }

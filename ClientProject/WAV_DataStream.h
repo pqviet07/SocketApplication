@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <MediaDataStream.h>
+#include <WAV_Header.h>
 
 class WAV_DataStream : public MediaDataStream {
 

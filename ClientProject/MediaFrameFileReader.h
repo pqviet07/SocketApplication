@@ -17,6 +17,9 @@ public:
 
     char* readNextFrame(WAV_DataStream*);
     char* readNextFrame(Y4M_DataStream*);
+
+    char* getHeader(WAV_DataStream*);
+    char* getHeader(Y4M_DataStream*);
 };
 
 #endif // MEDIAFILEREADER_H

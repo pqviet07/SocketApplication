@@ -1,8 +1,11 @@
 #include <SocketReader.h>
+#include <QDebug>
 
 SocketReader *SocketReader::getInstance(std::string host, int port)
 {
     static SocketReader instance(host, port);
+    qDebug()<<&instance;
+
     return &instance;
 }
 

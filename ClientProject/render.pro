@@ -24,6 +24,8 @@ HEADERS += \
     SocketClient.h \
     SocketReader.h \
     WAV_DataStream.h \
+    WAV_Header.h \
     WAV_Render.h \
     Y4M_DataStream.h \
+    Y4M_Header.h \
     YUV_Render.h

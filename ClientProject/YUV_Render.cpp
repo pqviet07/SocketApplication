@@ -1,8 +1,9 @@
 #include <YUV_Render.h>
-YUV_Render::YUV_Render( MainWindow* mainWindow, Y4M_DataStream *y4mDataStream)
+YUV_Render::YUV_Render( MainWindow* mainWindow, Y4M_DataStream *y4mDataStream, long start)
 {
     this->mainWindow = mainWindow;
     this->y4mDataStream = y4mDataStream;
+    this->startTime = start;
 }
 
 char* YUV_Render::readNextFrame()
@@ -12,18 +13,20 @@ char* YUV_Render::readNextFrame()
 
 void YUV_Render::run()
 {
-    // Test YUV_Render:
-    int width = 640;
-    int height = 360;
+    int width = y4mDataStream->getWidth();
+    int height = y4mDataStream->getHeight();
+    int fps = y4mDataStream->getFPS();
+
     while(true)
     {
         char* yuvData = readNextFrame();
         if(yuvData==nullptr) {
-            QThread::msleep(200);
+            QThread::msleep(10);
             continue;
         }
+
         mainWindow->displayVideo(yuvData, width, height);
         yuvData = nullptr;
-        QThread::msleep(1001/24-15);
+        QThread::msleep(1000/fps - 17);
     }
 }

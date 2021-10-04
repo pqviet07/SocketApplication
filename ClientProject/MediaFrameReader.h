@@ -13,6 +13,9 @@ public:
 
     virtual char* readNextFrame(WAV_DataStream*) = 0;
     virtual char* readNextFrame(Y4M_DataStream*) = 0;
+
+    virtual char* getHeader(WAV_DataStream*) = 0;
+    virtual char* getHeader(Y4M_DataStream*) = 0;
 };
 
 #endif // MEDIAREADER_H

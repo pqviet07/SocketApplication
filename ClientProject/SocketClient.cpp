@@ -42,7 +42,9 @@ int SocketClient::receive_data(int socket)
             packet_index++;
         }
     }
-    printf("Image successfully Received!\n");
+
+    qDebug() << recv_size;
+    qDebug() << "Image successfully Received!\n";
     return 1;
 }
 
@@ -73,7 +75,7 @@ int SocketClient::connectToServer(std::string host, int port)
         return 1;
     }
 
-    //puts("Connected\n");
+    qDebug()<<"Connected!";
     receive_data(socket_desc);
 
     close(socket_desc);

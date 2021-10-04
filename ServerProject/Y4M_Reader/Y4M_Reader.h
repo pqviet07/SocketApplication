@@ -17,7 +17,6 @@ class Y4M_Reader
 private:
     Y4M_Header y4mHeader;
     int nCurrentFrame{1};
-    int frameSize{0};
     std::string path;
     std::ifstream fin;
 
@@ -28,8 +27,7 @@ public:
     char* serializeY4mHeader();
     ~Y4M_Reader();
     
-    int getFrameSize() const;
-    Y4M_Header getHeader() const;
+    Y4M_Header* getHeader();
     int getNumOfCurrentFrame() const;
 };
 

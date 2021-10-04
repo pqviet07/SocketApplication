@@ -2,7 +2,12 @@
 #include <QDebug>
 
 WAV_DataStream::WAV_DataStream(MediaFrameReader *frameReader) : MediaDataStream(frameReader)
-{}
+{
+    WAV_Header *header = (WAV_Header*)frameReader->getHeader(this);
+    duration = header->duration;
+    frameSize = header->frameSize;
+    totalBytePerReceipt = header->totalBytePerReceipt;
+}
 
 char* WAV_DataStream::getNextFrame()
 {

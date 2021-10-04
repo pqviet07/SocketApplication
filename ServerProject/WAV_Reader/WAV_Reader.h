@@ -17,6 +17,7 @@ public:
     WAV_Reader(std::string path = "");
     std::string* getNextFrame(int duration);
     WAV_Header* readWavHeader();
+    WAV_Header* getHeader();
     void showHeaderInfo();
     char* serializeWavHeader();
     ~WAV_Reader();

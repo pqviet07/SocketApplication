@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Media
+*.y4m
+*.wav

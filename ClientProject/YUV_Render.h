@@ -11,9 +11,9 @@ class YUV_Render : public QThread
 private:
     Y4M_DataStream *y4mDataStream{nullptr};
     MainWindow *mainWindow{nullptr};
-
+    long startTime;
 public:
-    YUV_Render(MainWindow*, Y4M_DataStream*);
+    YUV_Render(MainWindow*, Y4M_DataStream*, long);
     char* readNextFrame();
     void run() override;
 };

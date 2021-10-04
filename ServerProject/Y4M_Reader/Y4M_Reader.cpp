@@ -57,20 +57,20 @@ Y4M_Reader::Y4M_Reader(std::string path)
     switch (yuvRatio)
     {
     case 420:
-        frameSize = y4mHeader.width * y4mHeader.height * 3 / 2;
+        y4mHeader.frameSize = y4mHeader.width * y4mHeader.height * 3 / 2;
         break;
     case 422:
-        frameSize = y4mHeader.width * y4mHeader.height * 2;
+        y4mHeader.frameSize = y4mHeader.width * y4mHeader.height * 2;
         break;
     case 444:
-        frameSize = y4mHeader.width * y4mHeader.height * 3;
+        y4mHeader.frameSize = y4mHeader.width * y4mHeader.height * 3;
         break;
     default:
         std::cerr << "Not supported" << std::endl;
         break;
     }
     // -----------------------------------------------------------------------------------
-    
+
     std::getline(fin, headerStr);
 }
 
@@ -79,18 +79,18 @@ std::string *Y4M_Reader::getNextFrame()
     std::string *pFrame = new std::string;
     std::string temp;
     
-    while (pFrame->size() < frameSize)
+    while (pFrame->size() < y4mHeader.frameSize)
     {
         std::getline(fin, temp);
         pFrame->append(temp);
         
-        if (pFrame->size() > frameSize)
+        if (pFrame->size() > y4mHeader.frameSize)
         {
             std::string fiveOfLastByte = pFrame->substr(pFrame->size() - STRING_BEGIN_FRAME.size(), STRING_BEGIN_FRAME.size());
             if(fiveOfLastByte == STRING_BEGIN_FRAME)
             {
                 pFrame->erase(pFrame->size() - STRING_BEGIN_FRAME.size(), STRING_BEGIN_FRAME.size());
-                int nPadding = frameSize - pFrame->size();
+                int nPadding = y4mHeader.frameSize - pFrame->size();
                 for (int i = 0; i < nPadding; ++i) pFrame->push_back(PADDING_BYTE);
                 break;
             }
@@ -104,9 +104,7 @@ Y4M_Reader::~Y4M_Reader() { if(fin.is_open()) fin.close(); }
 
 bool Y4M_Reader::isEOF() { return fin.eof(); }
 
-int Y4M_Reader::getFrameSize() const { return frameSize; }
-
-Y4M_Header Y4M_Reader::getHeader() const { return y4mHeader; }
+Y4M_Header* Y4M_Reader::getHeader()  { return &y4mHeader; }
 
 int Y4M_Reader::getNumOfCurrentFrame() const { return nCurrentFrame; }
 

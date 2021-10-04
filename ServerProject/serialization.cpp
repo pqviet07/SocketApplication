@@ -1,4 +1,5 @@
 #include "serialization.h"
+#include <iostream>
 
 char *serialize(char *buffer, int value)
 {
@@ -33,6 +34,10 @@ char *serialize(char *buffer, char value)
 
 char *serialize(char *buffer, char *value, int len)
 {
-    for (int i = 0; i < len; i++) buffer[i] = value[i];
+    for (int i = 0; i < len; i++) 
+    {
+        buffer[i] = value[i];
+        std::cout << buffer[i] <<" ";
+    }
     return buffer + 1;
 }

@@ -25,3 +25,13 @@ char *MediaFrameFileReader::readNextFrame(Y4M_DataStream *)
 
 }
 
+char *MediaFrameFileReader::getHeader(WAV_DataStream *)
+{
+
+}
+
+char *MediaFrameFileReader::getHeader(Y4M_DataStream *)
+{
+
+}
+

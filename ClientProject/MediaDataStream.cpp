@@ -1,59 +1,73 @@
 #include <MediaDataStream.h>
-
-size_t MediaDataStream::getFrameSize() const
-{
-    return frameSize;
-}
-
-void MediaDataStream::setFrameSize(const size_t &value)
-{
-    frameSize = value;
-}
-
-size_t MediaDataStream::getNumberByteOfFramePerReceipt() const
-{
-    return nByteOfFramePerReceipt;
-}
-
-void MediaDataStream::setNumberByteOfFramePerReceipt(const size_t &value)
-{
-    nByteOfFramePerReceipt = value;
-}
-
-size_t MediaDataStream::getTotalBytePerReceipt() const
-{
-    return totalBytePerReceipt;
-}
-
-void MediaDataStream::setTotalBytePerReceipt(const size_t &value)
-{
-    totalBytePerReceipt = value;
-}
-
-size_t MediaDataStream::getNumberCurrentFrame() const
-{
-    return nCurrentFrame;
-}
-
-void MediaDataStream::setNumberCurrentFrame(const size_t &value)
-{
-    nCurrentFrame = value;
-}
-
-size_t MediaDataStream::getNumberCurrentReceipt() const
-{
-    return nCurrentReceipt;
-}
-
-void MediaDataStream::setNumberCurrentReceipt(const size_t &value)
-{
-    nCurrentReceipt = value;
-}
+#include <QDebug>
 
 MediaDataStream::MediaDataStream(MediaFrameReader *frameReader)
 {
     this->frameReader = frameReader;
+    qDebug()<<"in media data stream";
 }
+
+int MediaDataStream::getFrameSize() const
+{
+    return frameSize;
+}
+
+void MediaDataStream::setFrameSize(const int &value)
+{
+    frameSize = value;
+}
+
+int MediaDataStream::getNumberByteOfFramePerReceipt() const
+{
+    return nByteOfFramePerReceipt;
+}
+
+void MediaDataStream::setNumberByteOfFramePerReceipt(const int &value)
+{
+    nByteOfFramePerReceipt = value;
+}
+
+int MediaDataStream::getTotalBytePerReceipt() const
+{
+    return totalBytePerReceipt;
+}
+
+void MediaDataStream::setTotalBytePerReceipt(const int &value)
+{
+    totalBytePerReceipt = value;
+}
+
+int MediaDataStream::getNumberCurrentFrame() const
+{
+    return nCurrentFrame;
+}
+
+void MediaDataStream::setNumberCurrentFrame(const int &value)
+{
+    nCurrentFrame = value;
+}
+
+int MediaDataStream::getNumberCurrentReceipt() const
+{
+    return nCurrentReceipt;
+}
+
+void MediaDataStream::setNumberCurrentReceipt(const int &value)
+{
+    nCurrentReceipt = value;
+}
+
+int MediaDataStream::getDuration() const
+{
+    return duration;
+}
+
+void MediaDataStream::setDuration(const int &value)
+{
+    duration = value;
+}
+
+
 
 SocketBuffer *MediaDataStream::getSocketBuffer()
 {

@@ -8,11 +8,12 @@
 class MediaDataStream
 {
 protected:
-    size_t frameSize;
-    size_t nByteOfFramePerReceipt;
-    size_t totalBytePerReceipt;
-    size_t nCurrentFrame;
-    size_t nCurrentReceipt;
+    int frameSize{0};
+    int nByteOfFramePerReceipt{0};
+    int totalBytePerReceipt{0};
+    int nCurrentFrame{0};
+    int nCurrentReceipt{0};
+    int duration{0};
     MediaFrameReader *frameReader;
 
     // from file
@@ -31,20 +32,23 @@ public:
     std::string *getBuffer() const;
     void setBuffer(std::string *value);
 
-    size_t getFrameSize() const;
-    void setFrameSize(const size_t &value);
+    int getFrameSize() const;
+    void setFrameSize(const int &value);
 
-    size_t getNumberByteOfFramePerReceipt() const;
-    void setNumberByteOfFramePerReceipt(const size_t &value);
+    int getNumberByteOfFramePerReceipt() const;
+    void setNumberByteOfFramePerReceipt(const int &value);
 
-    size_t getTotalBytePerReceipt() const;
-    void setTotalBytePerReceipt(const size_t &value);
+    int getTotalBytePerReceipt() const;
+    void setTotalBytePerReceipt(const int &value);
 
-    size_t getNumberCurrentFrame() const;
-    void setNumberCurrentFrame(const size_t &value);
+    int getNumberCurrentFrame() const;
+    void setNumberCurrentFrame(const int &value);
 
-    size_t getNumberCurrentReceipt() const;
-    void setNumberCurrentReceipt(const size_t &value);
+    int getNumberCurrentReceipt() const;
+    void setNumberCurrentReceipt(const int &value);
+
+    int getDuration() const;
+    void setDuration(const int &value);
 };
 
 #endif // READER_H

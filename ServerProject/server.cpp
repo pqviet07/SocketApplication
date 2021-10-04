@@ -10,36 +10,38 @@
 #include <thread>
 #include "Y4M_Reader/Y4M_Reader.h"
 #include "WAV_Reader/WAV_Reader.h"
+const int DURATION = 500;
 
 int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
 {
    long long stat;
    printf("Sending Picture as Byte Array\n");
    std::vector<std::string*> yuvFrameList;
-   int duration = 1000;
+   int duration = DURATION;
    int nCurrentByteYUV = 0;
    int curFrame = 0;
-   int nByteImagePerPeriod = (duration/1000.0) * y4m_reader->getFrameSize() * y4m_reader->getHeader().fps;
+   int nByteImagePerPeriod = (duration/1000.0) * y4m_reader->getHeader()->frameSize * y4m_reader->getHeader()->fps;
+   int nByteAudioPerPeriod = sizeof(WAV_Header) + duration * wav_reader->getHeader()->byteRate / 1000;
+   int totalBytePerPeriod = nByteImagePerPeriod+nByteAudioPerPeriod;
+
+   std::cout << "TotalBytePerPeriod: " << totalBytePerPeriod << std::endl;
+   std::cout << "nByteImagePerPeriod: " << nByteImagePerPeriod << std::endl;
+   std::cout << "nByteAudioPerPeriod: " << nByteAudioPerPeriod << std::endl;
 
    // send header info ------------------------------------------------
-   std::cout << sizeof(WAV_Header)<<std::endl;
-   std::cout << sizeof(Y4M_Header)<<std::endl;
+   write(socket, (char*)wav_reader->getHeader(), sizeof(WAV_Header));
+   write(socket, (char*)&duration, sizeof(int));
+   write(socket, (char*)&nByteAudioPerPeriod, sizeof(int));
+   write(socket, (char*)&totalBytePerPeriod, sizeof(int));
 
-   char *wavHeader = wav_reader->serializeWavHeader();
-   do
-   {
-      stat = write(socket, wavHeader, sizeof(WAV_Header));
-   } while (stat < 0);
-
-   char *y4mHeader = y4m_reader->serializeY4mHeader();
-   do
-   {
-      stat = write(socket, wavHeader, sizeof(Y4M_Header));
-   } while (stat < 0);
+   write(socket, (char*)y4m_reader->getHeader(), sizeof(Y4M_Header));
+   write(socket, (char*)&duration, sizeof(int));
+   write(socket, (char*)&nByteImagePerPeriod, sizeof(int));
+   write(socket, (char*)&totalBytePerPeriod, sizeof(int));
    // ----------------------------------------------------------------
 
    // Send audio frame + video frame
-   while (wav_reader->isEOF() && y4m_reader->isEOF())
+   while (!wav_reader->isEOF() || !y4m_reader->isEOF())
    {
       if (!wav_reader->isEOF())
       {
@@ -55,19 +57,19 @@ int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
 
       if (!y4m_reader->isEOF())
       {
-         while (nCurrentByteYUV + nByteImagePerPeriod > curFrame * y4m_reader->getFrameSize())
+         while (nCurrentByteYUV + nByteImagePerPeriod > curFrame * y4m_reader->getHeader()->frameSize)
          {
             std::string *yuvFrame = y4m_reader->getNextFrame();
             yuvFrameList.push_back(yuvFrame);
             ++curFrame;
          }
-         int start = nCurrentByteYUV == 0 ? 0 : (nCurrentByteYUV - 1) / y4m_reader->getFrameSize();
-         int i = nCurrentByteYUV == 0 ? 0 : (nCurrentByteYUV - 1) % y4m_reader->getFrameSize();
+         int start = nCurrentByteYUV == 0 ? 0 : (nCurrentByteYUV - 1) / y4m_reader->getHeader()->frameSize;
+         int i = nCurrentByteYUV == 0 ? 0 : (nCurrentByteYUV - 1) % y4m_reader->getHeader()->frameSize;
          std::string temp;
          for (int cnt = 0; cnt < nByteImagePerPeriod; cnt++)
          {
             temp.push_back((*yuvFrameList[start])[i++]);
-            if (i == y4m_reader->getFrameSize())
+            if (i == y4m_reader->getHeader()->frameSize)
             {
                start++;
                i = 0;

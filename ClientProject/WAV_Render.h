@@ -15,9 +15,10 @@ Q_SIGNALS:
 private:
     WAV_DataStream *wavDataStream{nullptr};
     MainWindow *mainWindow{nullptr};
+    long startTime;
 
 public:
-    WAV_Render(MainWindow*, WAV_DataStream*);
+    WAV_Render(MainWindow*, WAV_DataStream*, long);
     char* readNextFrame();
     void run() override;
 };
