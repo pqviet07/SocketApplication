@@ -1,5 +1,6 @@
 #include <MainWindow.h>
-
+#include <chrono>
+#include <QAudioOutput>
 void MainWindow::playVideo()
 {
     isPause=false;
@@ -33,10 +34,11 @@ MainWindow::MainWindow() : QWidget()
     window->show();
 }
 
-void MainWindow::displayVideo(char* yuvData, int width, int height)
+void MainWindow::displayImage(char* yuvData, int width, int height)
 {
+    //auto start = std::chrono::high_resolution_clock::now();
 
-    QImage *myImage= new QImage(width, height, QImage::Format_ARGB32);
+    QImage myImage(width, height, QImage::Format_ARGB32);
 
     for(int i=0; i<height; i++)
     {
@@ -51,11 +53,14 @@ void MainWindow::displayVideo(char* yuvData, int width, int height)
             int g = Y - (0.698001f * (V-128)) - (0.337633f * (U-128));
             int b = Y + (1.732446f * (U-128));
 
-            myImage->setPixel(j, i, qRgb(r, g, b));
+            myImage.setPixel(j, i, qRgb(r, g, b));
         }
     }
 
-    imageLabel->setPixmap(QPixmap::fromImage(*myImage));
+    imageLabel->setPixmap(QPixmap::fromImage(myImage));
+    //auto stop = std::chrono::high_resolution_clock::now();
+    //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    //qDebug() << "Time taken by function: " << duration.count() << " microseconds";
     delete yuvData;
 }
 
@@ -67,5 +72,6 @@ void MainWindow::playAudio(char* data, int sz)
     buffer->open(QIODevice::ReadOnly);
     audioPlayer->setMedia(QMediaContent(), buffer);
     audioPlayer->play();
+
     delete data;
 }

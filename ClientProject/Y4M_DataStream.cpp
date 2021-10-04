@@ -3,7 +3,6 @@
 
 Y4M_DataStream::Y4M_DataStream(MediaFrameReader *frameReader) : MediaDataStream(frameReader)
 {
-
     Y4M_Header *header = (Y4M_Header*)frameReader->getHeader(this);
 
     if(header)
@@ -15,20 +14,7 @@ Y4M_DataStream::Y4M_DataStream(MediaFrameReader *frameReader) : MediaDataStream(
         duration = header->duration;
         nByteOfFramePerReceipt = header->nByteOfFramePerReceipt;
         totalBytePerReceipt = header->totalBytePerReceipt;
-
-        qDebug() << "im here -----";
-        qDebug() << width;
-        qDebug() << height;
-        qDebug() << fps;
-        qDebug() << frameSize;
-        qDebug() << "nByteOfFramePerReceipt: " << nByteOfFramePerReceipt;
-        qDebug() << "totalBytePerReceipt: " << totalBytePerReceipt;
-        qDebug() << "im here +++++++";
     }
-    else{
-         qDebug() << "im here2";
-    }
-
 }
 
 char* Y4M_DataStream::getNextFrame()

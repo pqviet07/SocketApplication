@@ -32,6 +32,7 @@ char *MediaFrameSocketReader::readNextFrame(WAV_DataStream *pDataStream)
     int frameSize = pDataStream->getFrameSize();
     int totalBytePerReceipt = pDataStream->getTotalBytePerReceipt();
     int nCurrentReceipt = pDataStream->getNumberCurrentReceipt();
+    int nCurrentFrame = pDataStream->getNumberCurrentFrame();
     int headerSize = sizeof(Y4M_Header) + sizeof (WAV_Header);
 
     char* pFrame = nullptr;
@@ -42,6 +43,7 @@ char *MediaFrameSocketReader::readNextFrame(WAV_DataStream *pDataStream)
         pFrame = new char[frameSize];
         for(int i=0; i<frameSize; i++) pFrame[i] = (*pSocketBuffer)[nCurrentReceipt*totalBytePerReceipt+i+headerSize];
         pDataStream->setNumberCurrentReceipt(nCurrentReceipt+1);
+        pDataStream->setNumberCurrentFrame(nCurrentFrame+1);
     }
     return pFrame;
 }

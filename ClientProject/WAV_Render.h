@@ -5,6 +5,7 @@
 #include <MainWindow.h>
 #include <WAV_DataStream.h>
 #include <QBuffer>
+using namespace std::chrono;
 
 class WAV_Render : public QThread
 {
@@ -18,7 +19,7 @@ private:
     long startTime;
 
 public:
-    WAV_Render(MainWindow*, WAV_DataStream*, long);
+    WAV_Render(MainWindow*, WAV_DataStream*, size_t);
     char* readNextFrame();
     void run() override;
 };

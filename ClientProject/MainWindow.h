@@ -27,7 +27,7 @@ public Q_SLOTS:
 
 public:
     MainWindow();
-    void displayVideo(char*, int, int);
+    void displayImage(char*, int, int);
     bool IsPause() const;
     virtual ~MainWindow() {}
 };

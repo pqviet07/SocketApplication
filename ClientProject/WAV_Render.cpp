@@ -1,6 +1,6 @@
 #include "WAV_Render.h"
 
-WAV_Render::WAV_Render(MainWindow *mainWindow, WAV_DataStream *wavDataStream, long start)
+WAV_Render::WAV_Render(MainWindow *mainWindow, WAV_DataStream *wavDataStream, size_t start)
 {
     this->mainWindow = mainWindow;
     this->wavDataStream = wavDataStream;
@@ -19,11 +19,15 @@ void WAV_Render::run()
     {
         char* wavData = readNextFrame();
         if(wavData==nullptr) {
-            QThread::msleep(10);
+            QThread::msleep(4);
             continue;
         }
 
         emit letPlayAudio(wavData, wavDataStream->getFrameSize());
-        QThread::msleep(duration);
+        auto currTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+        if(wavDataStream->getNumberCurrentFrame() == (int)(1+(currTime-startTime)/duration))
+        {
+            QThread::msleep(duration - (currTime-startTime)%duration);
+        }
     }
 }

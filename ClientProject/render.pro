@@ -11,7 +11,7 @@ SOURCES += \
     WAV_DataStream.cpp \
     WAV_Render.cpp \
     Y4M_DataStream.cpp \
-    YUV_Render.cpp \
+    Y4M_Render.cpp \
     main.cpp
 
 HEADERS += \
@@ -28,4 +28,4 @@ HEADERS += \
     WAV_Render.h \
     Y4M_DataStream.h \
     Y4M_Header.h \
-    YUV_Render.h
+    Y4M_Render.h
