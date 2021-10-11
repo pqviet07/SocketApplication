@@ -1,11 +1,42 @@
 #include <MediaDataStream.h>
 #include <QDebug>
 
+
+std::mutex *MediaDataStream::getMutex()
+{
+    return g_mutex;
+}
+
+std::condition_variable *MediaDataStream::getConditionVariable()
+{
+    return g_cv;
+}
+
+bool *MediaDataStream::getReady()
+{
+    return g_ready;
+}
+
+void MediaDataStream::setMutex(std::mutex *value)
+{
+    g_mutex = value;
+}
+
+void MediaDataStream::setConditionVariable(std::condition_variable *value)
+{
+    g_cv = value;
+}
+
+void MediaDataStream::setReady(bool *value)
+{
+    g_ready = value;
+}
+
 MediaDataStream::MediaDataStream(MediaFrameReader *frameReader)
 {
     this->frameReader = frameReader;
-    qDebug()<<"in media data stream";
 }
+
 
 int MediaDataStream::getFrameSize() const
 {
@@ -69,14 +100,14 @@ void MediaDataStream::setDuration(const int &value)
 
 
 
-SocketBuffer *MediaDataStream::getSocketBuffer()
+SocketDataStream *MediaDataStream::getSocketDataStream()
 {
-    return pSocketBuffer;
+    return pSocketDataStream;
 }
 
-void MediaDataStream::setSocketBuffer(SocketBuffer *value)
+void MediaDataStream::setSocketDataStream(SocketDataStream *value)
 {
-    pSocketBuffer = value;
+    pSocketDataStream = value;
 }
 
 std::string *MediaDataStream::getBuffer() const
@@ -87,4 +118,14 @@ std::string *MediaDataStream::getBuffer() const
 void MediaDataStream::setBuffer(std::string *value)
 {
     pbuffer = value;
+}
+
+char *MediaDataStream::getBufferCurrentFrame() const
+{
+    return pBufferCurrentFrame;
+}
+
+void MediaDataStream::setBufferCurrentFrame(char *value)
+{
+    pBufferCurrentFrame = value;
 }

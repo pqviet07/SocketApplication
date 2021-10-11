@@ -19,12 +19,34 @@ Y4M_DataStream::Y4M_DataStream(MediaFrameReader *frameReader) : MediaDataStream(
 
 char* Y4M_DataStream::getNextFrame()
 {
-    return frameReader->readNextFrame(this);
+    pBufferCurrentFrame = frameReader->readNextFrame(this);
+    return pBufferCurrentFrame;
 }
 
 void Y4M_DataStream::setFrameReader(MediaFrameReader* frameReader)
 {
     this->frameReader = frameReader;
+}
+
+void Y4M_DataStream::run()
+{
+    while (true)
+    {
+        std::unique_lock<std::mutex> ul(*g_mutex);
+        // produce data
+        if(getNextFrame()==nullptr)
+        {
+            continue;
+        }
+        *g_ready = true;
+
+        ul.unlock();
+        g_cv->notify_one();
+
+        // wait consumer (render)
+        ul.lock();
+        g_cv->wait(ul, [&]{ return !(*g_ready); } );
+    }
 }
 
 size_t Y4M_DataStream::getOffset() const

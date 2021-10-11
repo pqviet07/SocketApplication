@@ -5,8 +5,8 @@ SOURCES += \
     MediaFileReader.cpp \
     MediaFrameReader.cpp \
     MediaFrameSocketReader.cpp \
-    SocketBuffer.cpp \
     SocketClient.cpp \
+    SocketDataStream.cpp \
     SocketReader.cpp \
     WAV_DataStream.cpp \
     WAV_Render.cpp \
@@ -20,8 +20,8 @@ HEADERS += \
     MediaFrameFileReader.h \
     MediaFrameReader.h \
     MediaFrameSocketReader.h \
-    SocketBuffer.h \
     SocketClient.h \
+    SocketDataStream.h \
     SocketReader.h \
     WAV_DataStream.h \
     WAV_Header.h \

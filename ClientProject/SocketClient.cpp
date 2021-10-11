@@ -82,7 +82,7 @@ int SocketClient::connectToServer(std::string host, int port)
     return 0;
 }
 
-SocketBuffer* SocketClient::getDataStream()
+SocketDataStream* SocketClient::getDataStream()
 {
     return &dataStream;
 }

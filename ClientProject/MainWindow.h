@@ -9,6 +9,9 @@
 #include <QObject>
 #include <QSound>
 #include <QMediaPlayer>
+#include <chrono>
+#include <QAudioOutput>
+using namespace std::chrono;
 
 class MainWindow : public QWidget
 {

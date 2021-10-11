@@ -9,19 +9,19 @@
 #include <iostream>
 #include <fstream>
 #include <errno.h>
-#include <SocketBuffer.h>
+#include <SocketDataStream.h>
 
 class SocketClient
 {
 private:
     std::string host;
     int port;
-    SocketBuffer dataStream;
+    SocketDataStream dataStream;
 
 public:
     SocketClient();
     int receive_data(int);
     int connectToServer(std::string, int);
-    SocketBuffer* getDataStream();
+    SocketDataStream* getDataStream();
 };
 #endif // SOCKETCLIENT_H

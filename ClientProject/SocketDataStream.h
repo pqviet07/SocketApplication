@@ -1,9 +1,9 @@
-#ifndef MYQUEUE_H
-#define MYQUEUE_H
+#ifndef SOCKETDATASTREAM_H
+#define SOCKETDATASTREAM_H
 #include <mutex>
 #include <vector>
 
-class SocketBuffer
+class SocketDataStream
 {
 public:
     std::vector<char> m_vector;

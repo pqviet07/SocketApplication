@@ -2,7 +2,7 @@
 #define MEDIADATASTREAM_H
 #include <bits/stdc++.h>
 #include <SocketReader.h>
-#include <SocketBuffer.h>
+#include <SocketDataStream.h>
 #include <MediaFrameReader.h>
 
 class MediaDataStream
@@ -18,16 +18,24 @@ protected:
 
     // from file
     std::string *pbuffer;
+
     // from socket
-    SocketBuffer *pSocketBuffer;
+    SocketDataStream *pSocketDataStream;
+
+    char *pBufferCurrentFrame;
+
+    std::mutex *g_mutex;
+    std::condition_variable *g_cv;
+    bool *g_ready;
 
 public:
     MediaDataStream(MediaFrameReader *frameReader);
+
     virtual char* getNextFrame() = 0;
     virtual void setFrameReader(MediaFrameReader* frameReader) = 0;
 
-    SocketBuffer *getSocketBuffer();
-    void setSocketBuffer(SocketBuffer *value);
+    SocketDataStream *getSocketDataStream();
+    void setSocketDataStream(SocketDataStream *value);
 
     std::string *getBuffer() const;
     void setBuffer(std::string *value);
@@ -49,6 +57,18 @@ public:
 
     int getDuration() const;
     void setDuration(const int &value);
+
+    char *getBufferCurrentFrame() const;
+    void setBufferCurrentFrame(char *value);
+
+    std::mutex *getMutex();
+    void setMutex(std::mutex *value);
+
+    std::condition_variable *getConditionVariable();
+    void setConditionVariable(std::condition_variable *value);
+
+    bool *getReady();
+    void setReady(bool *value);
 };
 
 #endif // READER_H

@@ -10,7 +10,7 @@
 #include <thread>
 #include "Y4M_Reader/Y4M_Reader.h"
 #include "WAV_Reader/WAV_Reader.h"
-const int DURATION = 500;
+const int DURATION = 150;
 
 int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
 {
@@ -43,6 +43,8 @@ int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
    // Send audio frame + video frame
    while (!wav_reader->isEOF() || !y4m_reader->isEOF())
    {
+      time_t start = std::clock();
+
       if (!wav_reader->isEOF())
       {
          std::string *wavFrame = wav_reader->getNextFrame(duration);
@@ -82,6 +84,14 @@ int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
          } while (stat < 0);
          nCurrentByteYUV += nByteImagePerPeriod;
       }
+
+      time_t finish = std::clock();
+      double latency = double(finish - start)/CLOCKS_PER_SEC;
+      //std::cout << latency*1000 << " ms" << std::endl;
+      int sleeptime=DURATION-latency*1000;
+      if(sleeptime<0) sleeptime=0;
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
    }
 
    for (auto &&var : yuvFrameList) delete var;

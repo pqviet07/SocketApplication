@@ -17,10 +17,15 @@ private:
     WAV_DataStream *wavDataStream{nullptr};
     MainWindow *mainWindow{nullptr};
     long startTime;
+    char* pBufferCurrentFrame;
+
+    std::mutex *g_mutex;
+    std::condition_variable *g_cv;
+    bool *g_ready;
 
 public:
-    WAV_Render(MainWindow*, WAV_DataStream*, size_t);
-    char* readNextFrame();
+    WAV_Render(MainWindow*, WAV_DataStream*, long);
+    char* getNextFrame();
     void run() override;
 };
 

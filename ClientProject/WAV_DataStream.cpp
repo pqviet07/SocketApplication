@@ -11,10 +11,30 @@ WAV_DataStream::WAV_DataStream(MediaFrameReader *frameReader) : MediaDataStream(
 
 char* WAV_DataStream::getNextFrame()
 {
-    return frameReader->readNextFrame(this);
+    pBufferCurrentFrame = frameReader->readNextFrame(this);
+    return pBufferCurrentFrame;
 }
 
 void WAV_DataStream::setFrameReader(MediaFrameReader* frameReader)
 {
     this->frameReader = frameReader;
+}
+
+void WAV_DataStream::run()
+{
+    // int recvTime=0;
+    while (true)
+    {
+        std::unique_lock<std::mutex> ul(*g_mutex);
+        // produce data
+        if(getNextFrame()==nullptr) continue;
+
+        *g_ready = true;
+
+        ul.unlock();
+        g_cv->notify_one();
+        // wait consumer (render)
+        ul.lock();
+        g_cv->wait(ul, [&]  { return !(*g_ready); } );
+    }
 }

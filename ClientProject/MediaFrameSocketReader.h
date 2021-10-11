@@ -3,25 +3,25 @@
 #include <MediaFrameReader.h>
 #include <string>
 #include <SocketReader.h>
-#include <SocketBuffer.h>
+#include <SocketDataStream.h>
 
 class MediaFrameSocketReader : public MediaFrameReader
 {
 private:
     std::string host;
     int port;
-    SocketBuffer *pSocketBuffer;
+    SocketDataStream *pSocketDataStream;
 
 public:
     MediaFrameSocketReader(std::string host, int port, bool start=false);
-    void startAsync();
-    void stopAsync();
+    void startAsync() override;
+    void stopAsync() override;
 
-    char* readNextFrame(WAV_DataStream*);
-    char* readNextFrame(Y4M_DataStream*);
+    char* readNextFrame(WAV_DataStream*) override;
+    char* readNextFrame(Y4M_DataStream*)override;
 
-    char* getHeader(WAV_DataStream*);
-    char* getHeader(Y4M_DataStream*);
+    char* getHeader(WAV_DataStream*) override;
+    char* getHeader(Y4M_DataStream*) override;
 };
 
 #endif // MEDIASOCKETREADER_H

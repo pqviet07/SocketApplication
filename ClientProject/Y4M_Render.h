@@ -17,9 +17,16 @@ private:
     Y4M_DataStream *y4mDataStream{nullptr};
     MainWindow *mainWindow{nullptr};
     long startTime;
+
+    char* pBufferCurrentFrame;
+
+    std::mutex *g_mutex;
+    std::condition_variable *g_cv;
+    bool *g_ready;
+
 public:
-    Y4M_Render(MainWindow*, Y4M_DataStream*, size_t);
-    char* readNextFrame();
+    Y4M_Render(MainWindow*, Y4M_DataStream*, long);
+    char* getNextFrame();
     void run() override;
 };
 

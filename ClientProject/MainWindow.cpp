@@ -1,6 +1,5 @@
 #include <MainWindow.h>
-#include <chrono>
-#include <QAudioOutput>
+
 void MainWindow::playVideo()
 {
     isPause=false;
@@ -19,7 +18,7 @@ bool MainWindow::IsPause() const
 MainWindow::MainWindow() : QWidget()
 {
     QWidget *window = new QWidget;
-    window->setGeometry(100,100,800,600);
+    window->setGeometry(20,20,800,600);
     QVBoxLayout* layout= new QVBoxLayout;
 
     imageLabel = new QLabel;
@@ -36,7 +35,8 @@ MainWindow::MainWindow() : QWidget()
 
 void MainWindow::displayImage(char* yuvData, int width, int height)
 {
-    //auto start = std::chrono::high_resolution_clock::now();
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     QImage myImage(width, height, QImage::Format_ARGB32);
 
@@ -58,20 +58,21 @@ void MainWindow::displayImage(char* yuvData, int width, int height)
     }
 
     imageLabel->setPixmap(QPixmap::fromImage(myImage));
-    //auto stop = std::chrono::high_resolution_clock::now();
-    //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    //qDebug() << "Time taken by function: " << duration.count() << " microseconds";
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+
+    //qDebug() << "Time taken by function: " << duration.count() << " milliseconds";
+    //qDebug() << "End of frame at: " << duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count() << " milliseconds";
     delete yuvData;
 }
 
 void MainWindow::playAudio(char* data, int sz)
 {
-    audioPlayer = new QMediaPlayer;
-    QBuffer *buffer = new QBuffer(audioPlayer);
+    QMediaPlayer *pAudioPlayer = new QMediaPlayer;
+    QBuffer *buffer = new QBuffer(pAudioPlayer);
     buffer->setData(data, sz);
-    buffer->open(QIODevice::ReadOnly);
-    audioPlayer->setMedia(QMediaContent(), buffer);
-    audioPlayer->play();
-
     delete data;
+    buffer->open(QIODevice::ReadOnly);
+    pAudioPlayer->setMedia(QMediaContent(), buffer);
+    pAudioPlayer->play();
 }

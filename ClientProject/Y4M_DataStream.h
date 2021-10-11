@@ -4,7 +4,7 @@
 #include <MediaDataStream.h>
 #include <Y4M_Header.h>
 
-class Y4M_DataStream : public MediaDataStream
+class Y4M_DataStream : public MediaDataStream, public QThread
 {
 private:
     int width{};
@@ -15,8 +15,11 @@ private:
 
 public:
     Y4M_DataStream(MediaFrameReader*);
+
     char* getNextFrame() override;
     void setFrameReader(MediaFrameReader*)override;
+
+    void run() override;
 
     size_t getOffset() const;
     void setOffset(size_t);

@@ -8,11 +8,12 @@ MediaFrameSocketReader::MediaFrameSocketReader(std::string host, int port, bool 
     SocketReader::getInstance(host, port);
     this->host = host;
     this->port = port;
-    this->pSocketBuffer = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
+    this->pSocketDataStream = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
 
     if(start) {
         startAsync();
     }
+    QThread::sleep(1);
 }
 
 void MediaFrameSocketReader::startAsync()
@@ -27,7 +28,7 @@ void MediaFrameSocketReader::stopAsync()
 
 char *MediaFrameSocketReader::readNextFrame(WAV_DataStream *pDataStream)
 {
-    if(pSocketBuffer==nullptr) return nullptr;
+    if(pSocketDataStream==nullptr) return nullptr;
 
     int frameSize = pDataStream->getFrameSize();
     int totalBytePerReceipt = pDataStream->getTotalBytePerReceipt();
@@ -36,12 +37,12 @@ char *MediaFrameSocketReader::readNextFrame(WAV_DataStream *pDataStream)
     int headerSize = sizeof(Y4M_Header) + sizeof (WAV_Header);
 
     char* pFrame = nullptr;
-    int socketBufferSize = pSocketBuffer->size();
+    int SocketDataStreamSize = pSocketDataStream->size();
 
-    if(socketBufferSize-headerSize >= totalBytePerReceipt*(nCurrentReceipt+1))
+    if(SocketDataStreamSize-headerSize >= totalBytePerReceipt*(nCurrentReceipt+2))
     {
         pFrame = new char[frameSize];
-        for(int i=0; i<frameSize; i++) pFrame[i] = (*pSocketBuffer)[nCurrentReceipt*totalBytePerReceipt+i+headerSize];
+        for(int i=0; i<frameSize; i++) pFrame[i] = (*pSocketDataStream)[nCurrentReceipt*totalBytePerReceipt+i+headerSize];
         pDataStream->setNumberCurrentReceipt(nCurrentReceipt+1);
         pDataStream->setNumberCurrentFrame(nCurrentFrame+1);
     }
@@ -51,7 +52,7 @@ char *MediaFrameSocketReader::readNextFrame(WAV_DataStream *pDataStream)
 char *MediaFrameSocketReader::readNextFrame(Y4M_DataStream *pDataStream)
 {
 
-    if(pSocketBuffer==nullptr) return nullptr;
+    if(pSocketDataStream==nullptr) return nullptr;
 
     int frameSize = pDataStream->getFrameSize();
     int totalBytePerReceipt = pDataStream->getTotalBytePerReceipt();
@@ -60,22 +61,21 @@ char *MediaFrameSocketReader::readNextFrame(Y4M_DataStream *pDataStream)
     int nAudioBytePerReceipt = totalBytePerReceipt-pDataStream->getNumberByteOfFramePerReceipt();
 
     char* pFrame = nullptr;
-    int socketBufferSize = pSocketBuffer->size();
+    int SocketDataStreamSize = pSocketDataStream->size();
 
-    if(socketBufferSize-headerSize >= totalBytePerReceipt*(nCurrentReceipt+1))
+    if(SocketDataStreamSize-headerSize >= totalBytePerReceipt*(nCurrentReceipt+2))
     {
         int curFrame = pDataStream->getCurFrame();
 
-        if(socketBufferSize-nAudioBytePerReceipt*(nCurrentReceipt+1)- curFrame*frameSize >= frameSize)
+        if(SocketDataStreamSize-nAudioBytePerReceipt*(nCurrentReceipt+1)- curFrame*frameSize >= frameSize)
         {
-
             pFrame = new char[frameSize];
             int i=0;
             int j=pDataStream->getOffset();
 
             while(i<frameSize)
             {
-                pFrame[i]=(*pSocketBuffer)[nCurrentReceipt*totalBytePerReceipt+nAudioBytePerReceipt+j+headerSize];
+                pFrame[i]=(*pSocketDataStream)[nCurrentReceipt*totalBytePerReceipt+nAudioBytePerReceipt+j+headerSize];
 
                 i++;
                 j++;
@@ -98,7 +98,7 @@ char *MediaFrameSocketReader::readNextFrame(Y4M_DataStream *pDataStream)
 char *MediaFrameSocketReader::getHeader(WAV_DataStream* pDataStream)
 {
     char* header= new char[sizeof(WAV_Header)];
-    SocketBuffer* p = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
+    SocketDataStream* p = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
     for(int i=0; i<sizeof(WAV_Header); i++)  header[i] = (*p)[i];
     return header;
 }
@@ -106,7 +106,8 @@ char *MediaFrameSocketReader::getHeader(WAV_DataStream* pDataStream)
 char *MediaFrameSocketReader::getHeader(Y4M_DataStream* pDataStream)
 {
     char* header= new char[sizeof(Y4M_Header)];
-    SocketBuffer* p = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
+    SocketDataStream* p = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
     for(int i=0; i<sizeof(Y4M_Header); i++)  header[i] = (*p)[sizeof(WAV_Header)+i];
     return header;
 }
+

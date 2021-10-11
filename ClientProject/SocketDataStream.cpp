@@ -1,15 +1,15 @@
-#include <SocketBuffer.h>
+#include <SocketDataStream.h>
 
-void SocketBuffer::push_back(const char& value)
+void SocketDataStream::push_back(const char& value)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_vector.push_back(value);
 }
-char SocketBuffer::operator[](int idx) const
+char SocketDataStream::operator[](int idx) const
 {
     return m_vector[idx];
 }
-size_t SocketBuffer::size() const
+size_t SocketDataStream::size() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_vector.size();

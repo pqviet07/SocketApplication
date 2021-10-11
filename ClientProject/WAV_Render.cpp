@@ -1,15 +1,20 @@
 #include "WAV_Render.h"
 
-WAV_Render::WAV_Render(MainWindow *mainWindow, WAV_DataStream *wavDataStream, size_t start)
+WAV_Render::WAV_Render(MainWindow *mainWindow, WAV_DataStream *wavDataStream, long start)
 {
     this->mainWindow = mainWindow;
     this->wavDataStream = wavDataStream;
     this->startTime = start;
+
+    this->g_mutex = this->wavDataStream->getMutex();
+    this->g_cv = this->wavDataStream->getConditionVariable();
+    this->g_ready = this->wavDataStream->getReady();
 }
 
-char* WAV_Render::readNextFrame()
+char* WAV_Render::getNextFrame()
 {
-    return wavDataStream->getNextFrame();
+     pBufferCurrentFrame = wavDataStream->getBufferCurrentFrame();
+     return pBufferCurrentFrame;
 }
 
 void WAV_Render::run()
@@ -17,17 +22,25 @@ void WAV_Render::run()
     int duration = wavDataStream->getDuration();
     while(true)
     {
-        char* wavData = readNextFrame();
-        if(wavData==nullptr) {
-            QThread::msleep(4);
-            continue;
-        }
+
+        std::unique_lock<std::mutex> ul(*g_mutex);
+        g_cv->wait(ul, [&] { return *g_ready; });
+
+        char* wavData = getNextFrame();
+
+        *g_ready=false;
 
         emit letPlayAudio(wavData, wavDataStream->getFrameSize());
+
         auto currTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
         if(wavDataStream->getNumberCurrentFrame() == (int)(1+(currTime-startTime)/duration))
-        {
-            QThread::msleep(duration - (currTime-startTime)%duration);
+        {    
+            QThread::msleep(duration);
         }
+
+        ul.unlock();
+        // notify to producer (y4mDataStream)
+        g_cv->notify_one();
+
     }
 }
