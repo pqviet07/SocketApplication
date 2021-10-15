@@ -22,11 +22,12 @@ void WAV_DataStream::setFrameReader(MediaFrameReader* frameReader)
 
 void WAV_DataStream::run()
 {
-    // int recvTime=0;
+
     while (true)
     {
         std::unique_lock<std::mutex> ul(*g_mutex);
         // produce data
+
         if(getNextFrame()==nullptr) continue;
 
         *g_ready = true;
