@@ -10,7 +10,7 @@
 #include <thread>
 #include "Y4M_Reader/Y4M_Reader.h"
 #include "WAV_Reader/WAV_Reader.h"
-const int DURATION = 150;
+const int DURATION = 200;
 
 int send_data(int socket, Y4M_Reader *y4m_reader, WAV_Reader *wav_reader)
 {

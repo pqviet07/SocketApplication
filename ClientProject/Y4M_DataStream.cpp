@@ -1,6 +1,6 @@
 #include "Y4M_DataStream.h"
 #include <QDebug>
-
+using namespace std::chrono;
 Y4M_DataStream::Y4M_DataStream(MediaFrameReader *frameReader) : MediaDataStream(frameReader)
 {
     Y4M_Header *header = (Y4M_Header*)frameReader->getHeader(this);
@@ -33,15 +33,24 @@ void Y4M_DataStream::run()
     while (true)
     {
         std::unique_lock<std::mutex> ul(*g_mutex);
-        // produce data
-        if(getNextFrame()==nullptr)
-        {
-            continue;
-        }
-        *g_ready = true;
 
+        // wait notify from socketdatastream
+//        std::mutex& mt= frameReader->getSocketDataStream()->getMutex(1);
+//        std::condition_variable& cv = frameReader->getSocketDataStream()->getConditionVariable(1);
+//        std::unique_lock<std::mutex> ul2(mt);
+//        // if read index < write index --> possible read data
+//        // else continue waiting
+//        cv.wait(ul2, [&]{return frameReader->getSocketDataStream()->getReadIndexVideo() < frameReader->getSocketDataStream()->getWriteIndex();});
+
+        while(getNextFrame()==nullptr) continue;
+
+//        frameReader->getSocketDataStream()->incReadIndexVideo();
+//        ul2.unlock();
+//        cv.notify_all();
+
+        *g_ready = true;
         ul.unlock();
-        g_cv->notify_one();
+        g_cv->notify_all();
 
         // wait consumer (render)
         ul.lock();

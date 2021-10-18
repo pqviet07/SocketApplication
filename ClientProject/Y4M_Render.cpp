@@ -30,6 +30,7 @@ void Y4M_Render::run()
         std::unique_lock<std::mutex> ul(*g_mutex);
         g_cv->wait(ul, [&] { return *g_ready; });
 
+       // qDebug()<<"In 4ym render";
         char* yuvData = getNextFrame();
 
         *g_ready=false;

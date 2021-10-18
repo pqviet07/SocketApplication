@@ -3,6 +3,7 @@
 #include <Y4M_DataStream.h>
 #include <QDebug>
 
+
 MediaFrameSocketReader::MediaFrameSocketReader(std::string host, int port, bool start)
 {
     SocketReader::getInstance(host, port);
@@ -109,5 +110,10 @@ char *MediaFrameSocketReader::getHeader(Y4M_DataStream* pDataStream)
     SocketDataStream* p = SocketReader::getInstance(host, port)->getSocketClient()->getDataStream();
     for(int i=0; i<sizeof(Y4M_Header); i++)  header[i] = (*p)[sizeof(WAV_Header)+i];
     return header;
+}
+
+SocketDataStream *MediaFrameSocketReader::getSocketDataStream()
+{
+    return pSocketDataStream;
 }
 

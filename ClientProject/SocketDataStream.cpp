@@ -9,28 +9,32 @@ SocketDataStream::SocketDataStream(int sz)
 
 void SocketDataStream::push_back(const char& value)
 {
-    std::unique_lock<std::mutex> ul(m_mutex);
-    cv.wait(ul, [&]{return readIndex<=writeIndex;});
+    std::unique_lock<std::mutex> ul(m_mutex[i]);
+    cv[i].wait(ul, [&]{return (readIndexAudio<=writeIndex && readIndexVideo<=writeIndex) || writeIndex==0;});
 
-    buffers[i].push_back(value);
+    if(i==0) buffers[i].push_back(value);
+    else {
+        buffers[i][j++]=value;
+    }
      ++totalSize;
+    //qDebug() << "Total Size: "<< totalSize;
 
     if(i==0 && buffers[0].size()==sizeof(WAV_Header)+sizeof(Y4M_Header))
     {
-
-        ++i;
+        ++i; 
         bufferSize = ((WAV_Header*)buffers[0].data())->totalBytePerReceipt;
-        qDebug() << "Buff Size: "<< bufferSize;
-        ++writeIndex;
+        for(int idx=1;idx<buffers.size();idx++) buffers[idx].resize(bufferSize);
+        incWriteIndex();
     }
-    else if(i!=0 && buffers[i].size()==bufferSize)
+    else if(i!=0 && j==bufferSize)
     {
-        i=(i+1)%4;
-        if(i==0) i==1;
-        ++writeIndex;
-
+        j=0;
+        i++;
+        if(i==buffers.size()) i=1;
+        incWriteIndex();
+        //qDebug()<<"notify here!";
         ul.unlock();
-        cv.notify_all();
+        cv[i].notify_all();
     }
 }
 
@@ -39,40 +43,109 @@ void SocketDataStream::push_back(const char& value)
 //  5  6  7  8  9 10 11 12      vec[1] store data
 // 13 14 15 16 17 18 19 20      vec[2] store data
 // 21 22 23 24 25 26 27 28      vec[3] store data
+
 // 29 30 37 32 33 34 35 36      vec[4]--find in--->vec[1]
 //                              vec[5]--find in--->vec[2]
+
 char SocketDataStream::operator[](int idx) const
 {
-     // ReaderIdx < WritterIdx will Oke
+     // Reader Idx < Writter Idx will Oke
      // if (1+(idx-headerSize)/bufferSize < writeIndex)
-     int j{readIndex};
-     if(readIndex>=buffers.size()) j=(readIndex+1)%buffers.size();
-     return buffers[j][(idx-headerSize)%bufferSize];
+     int x=0;
+     int k=idx;
+     if(idx>headerSize)
+     {
+         k=(idx-headerSize)%bufferSize;
+         x=1+(idx-headerSize)/bufferSize;
+         if(x>=buffers.size()) {
+             x=x%(buffers.size()-1);
+             if(x==0) x=buffers.size()-1;
+         }
+     }
+     //  qDebug()<<"X:"<<x;
+     return buffers[x][k];
 }
 
 size_t SocketDataStream::size() const
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    //std::lock_guard<std::mutex> lock(m_mutex);
     return totalSize;
 }
 
-int SocketDataStream::getReadIndex() const
+int SocketDataStream::getReadIndexAudio() const
 {
-    return readIndex;
+    return readIndexAudio.load();
+}
+
+int SocketDataStream::getReadIndexVideo() const
+{
+    return readIndexVideo.load();
 }
 
 int SocketDataStream::getWriteIndex() const
 {
-    return writeIndex;
+    return writeIndex.load();
 }
 
-int SocketDataStream::setReadIndex(int value)
+void SocketDataStream::incReadIndexAudio()
 {
-    readIndex=value;
+    ++readIndexAudio;
 }
 
-int SocketDataStream::setWriteIndex(int value)
+void SocketDataStream::incReadIndexVideo()
 {
-    writeIndex=value;
+    ++readIndexVideo;
 }
+
+void SocketDataStream::incWriteIndex()
+{
+    ++writeIndex;
+}
+
+// readIdx: 1 2 3   4 5 6   7 8 9
+// idx      1 2 3   1 2 3   1 2 3
+std::condition_variable& SocketDataStream::getConditionVariable(int x)
+{
+    int idx{0};
+    if(x==0) {
+        idx = readIndexAudio;
+        if(idx>=buffers.size()) {
+            idx=readIndexAudio%(buffers.size()-1);
+            if(idx==0) idx=buffers.size()-1;
+        }
+        //qDebug()<<idx;
+    }
+    else{
+        idx = readIndexVideo;
+        if(idx>=buffers.size()) {
+            idx=readIndexVideo%(buffers.size()-1);
+            if(idx==0) idx=buffers.size()-1;
+        }
+        //qDebug()<<idx;
+   }
+   return ref(cv[idx]);
+}
+
+std::mutex& SocketDataStream::getMutex(int x)
+{
+    int idx{0};
+    if(x==0) {
+        idx = readIndexAudio;
+        if(idx>=buffers.size()) {
+            idx=readIndexAudio%(buffers.size()-1);
+            if(idx==0) idx=buffers.size()-1;
+        }
+        //qDebug()<<idx;
+    }
+    else {
+        idx = readIndexVideo;
+        if(idx>=buffers.size()) {
+            idx=readIndexVideo%(buffers.size()-1);
+            if(idx==0) idx=buffers.size()-1;
+        }
+        //qDebug()<<idx;
+    }
+    return ref(m_mutex[idx]);
+}
+
 

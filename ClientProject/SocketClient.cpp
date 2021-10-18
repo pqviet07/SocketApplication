@@ -1,7 +1,7 @@
 #include "SocketClient.h"
 #include <QDebug>
 
-SocketClient::SocketClient() : dataStream{4}
+SocketClient::SocketClient() : dataStream{100}
 {
 }
 

@@ -25,7 +25,7 @@ void WAV_Render::run()
 
         std::unique_lock<std::mutex> ul(*g_mutex);
         g_cv->wait(ul, [&] { return *g_ready; });
-
+        //qDebug()<<"In wav render";
         char* wavData = getNextFrame();
 
         *g_ready=false;
@@ -34,7 +34,7 @@ void WAV_Render::run()
 
         auto currTime = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
         if(wavDataStream->getNumberCurrentFrame() == (int)(1+(currTime-startTime)/duration))
-        {    
+        {
             QThread::msleep(duration);
         }
 
